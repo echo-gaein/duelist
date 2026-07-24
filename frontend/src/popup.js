@@ -47,9 +47,6 @@ function wireEvents() {
   elements.classNameInput.addEventListener("blur", () => {
     elements.classNameInput.placeholder = classPlaceholder;
   });
-  // When the class name changes, recheck which assignments are already added
-  // under that prefix.
-  elements.classNameInput.addEventListener("change", onClassNameChange);
 }
 
 function classNameOverride() {
@@ -61,13 +58,6 @@ function classNameOverride() {
 function withCourseOverride(assignment) {
   const override = classNameOverride();
   return override ? { ...assignment, course: override } : assignment;
-}
-
-async function onClassNameChange() {
-  if (!state.assignments.length) return;
-  await refreshAssignmentStatuses();
-  state.selected = new Set([...state.selected].filter((index) => !isAlreadyAdded(state.assignments[index])));
-  renderAssignments();
 }
 
 function toggleHideLate() {
@@ -140,13 +130,20 @@ async function scanCurrentTab() {
 
     if (isUnsupportedSite) {
       showMessage("", "");
+    } else if (!count) {
+      showMessage(emptyScanMessage(response.debug), "warning");
     } else {
-      showMessage(
-        count
-          ? scanResultMessage(count, checkedTaskStatus)
-          : emptyScanMessage(response.debug),
-        count && checkedTaskStatus ? "success" : "warning",
-      );
+      const lowCount = state.assignments.filter(isLowConfidence).length;
+      const base = scanResultMessage(count, checkedTaskStatus);
+      if (lowCount) {
+        const verb = lowCount === 1 ? "looks" : "look";
+        showMessage(
+          `${base} ${lowCount} ${verb} uncertain — check the ⚠ marks.`,
+          "warning",
+        );
+      } else {
+        showMessage(base, checkedTaskStatus ? "success" : "warning");
+      }
     }
   } catch (error) {
     showMessage(error.message || "Could not scan this page.", "error");
@@ -260,6 +257,14 @@ function renderAssignments() {
       lateBadge.className = "statusBadge late";
       lateBadge.textContent = "Late";
       title.append(" ", lateBadge);
+    }
+
+    if (isLowConfidence(assignment)) {
+      const warnBadge = document.createElement("span");
+      warnBadge.className = "statusBadge warn";
+      warnBadge.textContent = "⚠ Check";
+      warnBadge.title = `Low confidence (${Math.round((assignment.confidence ?? 0) * 100)}%) — double-check the date and title before adding.`;
+      title.append(" ", warnBadge);
     }
 
     if (isAlreadyAdded(assignment)) {
@@ -379,9 +384,8 @@ async function refreshAssignmentStatuses() {
   }
 
   try {
-    const results = await AssignmentTasks.checkAssignmentStatuses(
-      state.assignments.map(withCourseOverride),
-    );
+    // De-dup ignores the class prefix, so the detected assignments are enough.
+    const results = await AssignmentTasks.checkAssignmentStatuses(state.assignments);
 
     state.assignments = state.assignments.map((assignment, index) => {
       const result = results[index];
@@ -479,6 +483,13 @@ function isAlreadyAdded(assignment) {
 function isLate(assignment) {
   const status = dueStatus(assignment);
   return Boolean(status && status.overdue);
+}
+
+// Assignments the detector isn't sure about — warn the user to double-check.
+const LOW_CONFIDENCE_THRESHOLD = 0.6;
+
+function isLowConfidence(assignment) {
+  return typeof assignment.confidence === "number" && assignment.confidence < LOW_CONFIDENCE_THRESHOLD;
 }
 
 function isHidden(assignment) {

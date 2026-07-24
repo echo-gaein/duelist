@@ -1,6 +1,6 @@
 {
   "name": "duelist",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Browser extension that detects course-page assignments and adds them to Google Tasks — no backend required.",
   "scripts": {

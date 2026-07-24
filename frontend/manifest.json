@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "DueList",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Detect homework assignments on course pages and add them to Google Tasks.",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtP4HzAtBzIkj8yzH5A9i0wPfD/tbvmt7zlq7ugMd+8A399VJ+1olJ4T76C2fNl1jg6mfkbd8H85iM7rDcGD78Rb9QVuG8bAzykdB8IsXH0RK/xqG5UahlyKIQJM3UUA3Q6J2CQMIzvBJZGC5Fn6NOgLWgN0UA9QTBDwo6km4CPt5nhOA6ZgSvTOddIzCPqur2yZCrJ7fvZ0+dAqQUoFngjdCRlKIdEb1OtagkabYLXk+yZ8mo4SXtfX106pTWwwyXiL4CNWEchGbhDhZ1WCe/sXyBG20sHVR83pvC/8D2d+R+mkoq0Apy9BdQVaqGKphRR5p3B/jINpy8Qw2TmDx6wIDAQAB",
   "permissions": ["activeTab", "scripting", "identity"],

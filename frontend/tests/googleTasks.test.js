@@ -31,14 +31,15 @@ assert.match(
   /^\d{4}-\d{2}-\d{2}T00:00:00\.000Z$/,
 );
 
-// De-dup key = normalized title + due day; case/space-insensitive, time-insensitive.
-const key = Tasks.taskKey("Data 8: Homework 3", "2026-07-24T00:00:00.000Z");
-assert.strictEqual(key, "data 8: homework 3|2026-07-24");
-assert.strictEqual(
-  key,
-  Tasks.taskKey("  DATA 8:   Homework 3 ", "2026-07-24T11:59:00.000Z"),
-  "key should ignore case, extra spaces, and the time of day",
-);
+// De-dup matches on the assignment name, with OR without a class prefix, so the
+// "already added" state survives typing a class name.
+assert.ok(Tasks.titleMatches("Homework 3", "Homework 3"), "exact title matches");
+assert.ok(Tasks.titleMatches("CS 61A: Homework 3", "Homework 3"), "prefixed title matches");
+assert.ok(Tasks.titleMatches("Data 8: Homework 3", "Homework 3"), "any prefix matches");
+assert.ok(Tasks.titleMatches("  cs 61a:   homework 3 ", "Homework 3"), "case/space-insensitive");
+assert.ok(!Tasks.titleMatches("CS 61A: Homework 4", "Homework 3"), "different assignment does not match");
+assert.ok(!Tasks.titleMatches("My Homework 3", "Homework 3"), "substring without ': ' does not match");
+assert.ok(!Tasks.titleMatches("Homework 3", ""), "empty assignment title never matches");
 
 // Notes keep only URL + Deadline — no Source, detected text, or fingerprint.
 const task = Tasks.buildGoogleTask(assignment);

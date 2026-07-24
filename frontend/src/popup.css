@@ -1,16 +1,53 @@
+/* JetBrains Mono NL — bundled so it works on any machine. */
+@font-face {
+  font-family: "JetBrains Mono NL";
+  src: url("../assets/fonts/JetBrainsMonoNL-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono NL";
+  src: url("../assets/fonts/JetBrainsMonoNL-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono NL";
+  src: url("../assets/fonts/JetBrainsMonoNL-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono NL";
+  src: url("../assets/fonts/JetBrainsMonoNL-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   color-scheme: light;
-  --bg: #fbfaf7;
+  --bg: #f4f4f4;
   --panel: #ffffff;
-  --text: #1d252c;
-  --muted: #68737d;
-  --border: #d9dde2;
-  --primary: #155eef;
-  --primary-hover: #0f4bcc;
-  --secondary: #f1f5f9;
-  --success: #0f766e;
-  --warning: #b45309;
-  --danger: #b42318;
+  --text: #212530;
+  --muted: #6b7079;
+  --border: #e2e2e3;
+  --border-strong: #cfcfd0;
+  --primary: #8fcdf1;
+  --primary-hover: #78c0ec;
+  --primary-text: #12384f;
+  --accent: #4a93cc;
+  --secondary: #e6f2fb;
+  --secondary-hover: #d6eaf8;
+  --success: #4a7c59;
+  --warning: #a8690f;
+  --danger: #b03a2a;
+  --radius: 4px;
+  --radius-sm: 3px;
+  --mono: "JetBrains Mono NL", ui-monospace, "SF Mono", Menlo, monospace;
 }
 
 * {
@@ -23,7 +60,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font: 14px/1.4 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font: 13px/1.45 var(--mono);
 }
 
 body.unsupportedView {
@@ -36,8 +73,8 @@ input {
 }
 
 button {
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
   background: var(--panel);
   color: var(--text);
   cursor: pointer;
@@ -45,15 +82,21 @@ button {
 
 button:disabled {
   cursor: not-allowed;
-  opacity: 0.55;
+  opacity: 0.5;
+}
+
+input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 15px;
+  height: 15px;
 }
 
 .shell {
   display: grid;
   align-content: start;
-  gap: 14px;
+  gap: 12px;
   min-height: 460px;
-  padding: 16px;
+  padding: 14px;
 }
 
 .unsupportedView .shell {
@@ -66,13 +109,16 @@ button:disabled {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
 }
 
 h1 {
   margin: 0;
-  font-size: 20px;
+  font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 p {
@@ -80,23 +126,23 @@ p {
 }
 
 #statusText {
-  margin-top: 2px;
+  margin-top: 3px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .scanButton {
-  height: 36px;
-  min-height: 36px;
-  padding: 8px 12px;
+  height: 34px;
+  min-height: 34px;
+  padding: 6px 14px;
   background: var(--secondary);
-  font-weight: 650;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
-.resultsHeader {
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 650;
+.scanButton:not(:disabled):hover {
+  background: var(--secondary-hover);
 }
 
 .actions {
@@ -107,13 +153,19 @@ p {
 }
 
 .classInput {
-  height: 36px;
+  height: 34px;
   min-width: 0;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 6px 9px;
   background: var(--panel);
   color: var(--text);
+  font-size: 12px;
+}
+
+.classInput:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
 .classInput[hidden] {
@@ -125,10 +177,10 @@ p {
   align-content: center;
   gap: 10px;
   justify-items: center;
-  min-height: 330px;
+  min-height: 320px;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  background: #ffffff;
+  border-radius: var(--radius);
+  background: var(--panel);
   padding: 28px 22px;
   text-align: center;
 }
@@ -139,28 +191,31 @@ p {
 
 .emptyMark {
   display: inline-grid;
-  min-width: 62px;
-  min-height: 40px;
+  min-width: 44px;
+  min-height: 44px;
   place-items: center;
-  border-radius: 999px;
-  background: #e7f7f4;
-  color: var(--success);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--secondary);
+  color: var(--muted);
   font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
 }
 
 .emptyState h2 {
   margin: 6px 0 0;
-  font-size: 21px;
-  line-height: 1.2;
-  letter-spacing: 0;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .emptyState p {
   max-width: 290px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 12px;
 }
 
 [hidden] {
@@ -170,10 +225,12 @@ p {
 .primary,
 .secondary,
 #selectAllButton {
-  height: 36px;
-  min-height: 36px;
-  padding: 8px 10px;
-  font-weight: 650;
+  height: 34px;
+  min-height: 34px;
+  padding: 6px 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -182,16 +239,22 @@ p {
 .primary {
   border-color: var(--primary);
   background: var(--primary);
-  color: #ffffff;
+  color: var(--primary-text);
 }
 
 .primary:not(:disabled):hover {
   background: var(--primary-hover);
+  border-color: var(--primary-hover);
 }
 
 .secondary,
 #selectAllButton {
   background: var(--secondary);
+}
+
+.secondary:not(:disabled):hover,
+#selectAllButton:not(:disabled):hover {
+  background: var(--secondary-hover);
 }
 
 .results {
@@ -204,6 +267,9 @@ p {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
 }
 
 .resultsControls {
@@ -215,9 +281,11 @@ p {
 .toggle {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   cursor: pointer;
   white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .toggle input {
@@ -226,15 +294,16 @@ p {
 }
 
 #selectAllButton {
-  min-height: 30px;
-  padding: 5px 8px;
-  font-size: 12px;
+  min-height: 28px;
+  padding: 4px 8px;
+  font-size: 11px;
 }
 
 .assignmentList {
   display: grid;
   max-height: 340px;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   gap: 6px;
   padding-right: 2px;
 }
@@ -245,13 +314,24 @@ p {
   gap: 9px;
   align-items: start;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: var(--panel);
   padding: 8px 10px;
 }
 
+/* Let the text column shrink so the meta line truncates instead of forcing
+   the card wider (monospace is wide). */
+.assignment > div {
+  min-width: 0;
+}
+
+.assignment:hover {
+  border-color: var(--border-strong);
+}
+
 .assignment.isAdded {
-  background: #f8fafc;
+  background: transparent;
+  border-style: dashed;
   color: var(--muted);
 }
 
@@ -261,45 +341,52 @@ p {
 
 .assignmentTitle {
   font-weight: 700;
+  font-size: 13px;
   overflow-wrap: anywhere;
 }
 
 .statusBadge {
   display: inline-flex;
   align-items: center;
-  min-height: 20px;
+  min-height: 17px;
   margin-left: 6px;
-  border: 1px solid #b7d8d3;
-  border-radius: 999px;
-  padding: 2px 7px;
-  background: #e7f7f4;
+  border: 1px solid var(--success);
+  border-radius: var(--radius-sm);
+  padding: 1px 5px;
+  background: transparent;
   color: var(--success);
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   vertical-align: middle;
 }
 
 .statusBadge.late {
-  border-color: #f1c0bd;
-  background: #fdecea;
+  border-color: var(--danger);
   color: var(--danger);
 }
 
+.statusBadge.warn {
+  border-color: var(--warning);
+  color: var(--warning);
+}
+
 .assignmentMeta {
-  margin-top: 2px;
+  margin-top: 3px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 11px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .message {
-  min-height: 20px;
+  min-height: 18px;
   max-height: 96px;
   overflow-y: auto;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 11px;
   overflow-wrap: anywhere;
   word-break: break-word;
 }

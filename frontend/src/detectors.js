@@ -40,8 +40,51 @@
 
     return dedupe(assignments)
       .filter((assignment) => assignment.title && assignment.dueAt)
-      .map((assignment) => ({ ...assignment, dueDate: localDateString(assignment.dueAt) }))
+      .map((assignment) => ({
+        ...assignment,
+        dueDate: localDateString(assignment.dueAt),
+        confidence: scoreAssignment(assignment),
+      }))
       .sort((a, b) => Date.parse(a.dueAt) - Date.parse(b.dueAt));
+  }
+
+  // A rough 0–1 estimate of how likely a scraped assignment is correct, from the
+  // signals that indicate a clean parse: an isolated date with a time, a title
+  // that isn't itself a date, and a plausible deadline. Heuristic, not exact.
+  function scoreAssignment(assignment) {
+    const raw = normalizeWhitespace(assignment.rawDueText || "");
+    const title = normalizeWhitespace(assignment.title || "");
+    const dueMs = Date.parse(assignment.dueAt);
+
+    let score = 0.15;
+
+    const hasDate =
+      hasMonthName(raw) ||
+      /\b\d{1,2}\/\d{1,2}(?:\/\d{2,4})?\b/.test(raw) ||
+      /\b\d{4}-\d{2}-\d{2}\b/.test(raw);
+    const hasTime = /\b\d{1,2}:\d{2}\b/.test(raw) || /\b\d{1,2}\s*(?:am|pm)\b/i.test(raw);
+    const isolatedDate = raw.length > 0 && raw.length <= 45;
+
+    if (hasDate) score += 0.35;
+    if (hasTime) score += 0.1;
+    if (isolatedDate) score += 0.1;
+
+    if (title.length >= 3 && title.length <= 100) score += 0.1;
+    else score -= 0.1;
+    // The title looking like a due date means the parser likely grabbed the
+    // wrong text.
+    if (looksLikeDueText(title)) score -= 0.25;
+
+    if (!Number.isNaN(dueMs)) {
+      const days = (dueMs - Date.now()) / 86_400_000;
+      if (days >= -45 && days <= 300) score += 0.2;
+      else if (days >= -150 && days <= 500) score += 0.05;
+      else score -= 0.15;
+    } else {
+      score -= 0.2;
+    }
+
+    return Math.round(Math.max(0, Math.min(1, score)) * 100) / 100;
   }
 
   // The calendar date of dueAt in this browser's timezone (YYYY-MM-DD). Google
@@ -811,6 +854,7 @@
     detectAssignments,
     debugPage,
     parseDueDate,
+    scoreAssignment,
     siteDetectors: SITE_DETECTORS.map(({ id, name }) => ({ id, name })),
   };
 

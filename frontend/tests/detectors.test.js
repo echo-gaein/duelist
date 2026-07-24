@@ -422,4 +422,38 @@ if (canvasAssignments[0].dueDate !== "2027-09-05") {
 }
 console.log(canvasAssignments);
 
+// --- Confidence scoring ---
+const scoreAssignment = context.window.AssignmentCalendarDetectors.scoreAssignment;
+const WARN_THRESHOLD = 0.6; // mirrors popup.js LOW_CONFIDENCE_THRESHOLD
+
+// Detected assignments carry a numeric confidence, and a clean row isn't flagged.
+if (typeof assignments[0].confidence !== "number") {
+  throw new Error("Detected assignments should include a numeric confidence");
+}
+if (assignments[0].confidence < WARN_THRESHOLD) {
+  throw new Error(`Clean Gradescope row should not be flagged, got ${assignments[0].confidence}`);
+}
+
+const soon = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString();
+const cleanScore = scoreAssignment({ title: "Lab 3", rawDueText: "Jul 02 at 11:59PM", dueAt: soon });
+if (cleanScore < WARN_THRESHOLD) {
+  throw new Error(`A clean assignment should not be flagged, got ${cleanScore}`);
+}
+
+// No extractable due text -> below the warning threshold.
+const noDueTextScore = scoreAssignment({ title: "Homework 5", rawDueText: "", dueAt: soon });
+if (noDueTextScore >= WARN_THRESHOLD) {
+  throw new Error(`An assignment with no due text should be flagged, got ${noDueTextScore}`);
+}
+
+// A far-future (likely wrong-year) date is penalized relative to a near one.
+const farFutureScore = scoreAssignment({
+  title: "Lab 3",
+  rawDueText: "Jul 02 at 11:59PM",
+  dueAt: new Date(Date.now() + 800 * 24 * 60 * 60 * 1000).toISOString(),
+});
+if (farFutureScore >= cleanScore) {
+  throw new Error(`A far-future date should score lower than a near one, got ${farFutureScore} vs ${cleanScore}`);
+}
+
 console.log("detectors.test.js passed");

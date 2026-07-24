@@ -85,9 +85,9 @@
     }
   }
 
-  // Fingerprint -> task, across all pages of the default list.
-  async function listAssignmentTasks(options = {}) {
-    const index = new Map();
+  // Existing tasks bucketed by due day, across all pages of the default list.
+  async function listTasksByDueDay(options = {}) {
+    const byDay = new Map();
     let pageToken = "";
 
     do {
@@ -106,25 +106,34 @@
       );
 
       for (const task of data.items || []) {
-        if (!task.title) continue;
-        const key = taskKey(task.title, task.due);
-        if (!index.has(key)) index.set(key, task);
+        if (!task.title || !task.due) continue;
+        const day = String(task.due).slice(0, 10);
+        const bucket = byDay.get(day) || [];
+        bucket.push(task);
+        byDay.set(day, bucket);
       }
       pageToken = data.nextPageToken || "";
     } while (pageToken);
 
-    return index;
+    return byDay;
   }
 
-  async function upsertAssignmentTask(assignment, index) {
+  // Find a stored task that is the same assignment — same due day, and the same
+  // name whether or not a "Class: " prefix was added. This keeps the "already
+  // added" state even after the user types a class name.
+  function findExistingTask(byDay, assignment) {
+    const day = taskDueDate(assignment).slice(0, 10);
+    const bucket = byDay.get(day) || [];
+    return bucket.find((task) => titleMatches(task.title, assignment.title)) || null;
+  }
+
+  async function upsertAssignmentTask(assignment, byDay) {
     validateAssignment(assignment);
-    const key = taskKey(taskTitle(assignment), taskDueDate(assignment));
-    const existing = index.get(key);
+    const existing = findExistingTask(byDay, assignment);
 
     if (existing) {
       return {
         status: "skipped",
-        key,
         taskId: existing.id,
         taskLink: existing.selfLink,
         assignment,
@@ -140,7 +149,6 @@
 
     return {
       status: "created",
-      key,
       taskId: created.id,
       taskLink: created.selfLink,
       assignment,
@@ -149,12 +157,17 @@
 
   // Add several assignments, listing existing tasks once for de-duplication.
   async function addAssignments(assignments) {
-    const index = await listAssignmentTasks({ interactive: true });
+    const byDay = await listTasksByDueDay({ interactive: true });
     const results = [];
     for (const assignment of assignments) {
-      const result = await upsertAssignmentTask(assignment, index);
+      const result = await upsertAssignmentTask(assignment, byDay);
       if (result.status === "created") {
-        index.set(result.key, { id: result.taskId });
+        // Track it so later assignments in the same batch de-dup against it.
+        const built = buildGoogleTask(assignment);
+        const day = built.due.slice(0, 10);
+        const bucket = byDay.get(day) || [];
+        bucket.push({ id: result.taskId, title: built.title, due: built.due });
+        byDay.set(day, bucket);
       }
       results.push(result);
     }
@@ -162,16 +175,14 @@
   }
 
   async function checkAssignmentStatuses(assignments) {
-    const index = await listAssignmentTasks({ interactive: false });
+    const byDay = await listTasksByDueDay({ interactive: false });
     const results = [];
 
     for (const assignment of assignments) {
       validateAssignment(assignment);
-      const key = taskKey(taskTitle(assignment), taskDueDate(assignment));
-      const existing = index.get(key);
+      const existing = findExistingTask(byDay, assignment);
       results.push({
         status: existing ? "already_added" : "not_added",
-        key,
         taskId: existing?.id || null,
         taskLink: existing?.selfLink || null,
         assignment,
@@ -201,15 +212,17 @@
       : assignment.title;
   }
 
-  // De-duplication key: a task is "the same assignment" if its title and due
-  // date match. Keeps the notes free of any bookkeeping text.
-  function taskKey(title, due) {
-    const normalizedTitle = String(title || "")
-      .trim()
-      .toLowerCase()
-      .replace(/\s+/g, " ");
-    const dueDay = String(due || "").slice(0, 10);
-    return `${normalizedTitle}|${dueDay}`;
+  function normalizeTitle(title) {
+    return String(title || "").trim().toLowerCase().replace(/\s+/g, " ");
+  }
+
+  // Whether a stored task's title is this assignment's name — either exactly, or
+  // with any "Class: " prefix in front. That's what lets the "already added"
+  // check survive the user typing (or changing) a class name.
+  function titleMatches(storedTitle, assignmentTitle) {
+    const stored = normalizeTitle(storedTitle);
+    const base = normalizeTitle(assignmentTitle);
+    return Boolean(base) && (stored === base || stored.endsWith(`: ${base}`));
   }
 
   function buildGoogleTask(assignment) {
@@ -256,7 +269,7 @@
     // Exposed for tests:
     buildGoogleTask,
     taskTitle,
-    taskKey,
+    titleMatches,
     taskDueDate,
   };
 })(typeof window !== "undefined" ? window : globalThis);

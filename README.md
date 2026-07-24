@@ -41,7 +41,9 @@ your Google account may not be approved for the current test version yet.
 2. Open the popup and click **Scan**. Detected assignments appear with their
    course, due date, and source, plus a relative hint ("in 3 days", "2 days
    ago"). Anything past its deadline gets a red **Late** badge; ones already in
-   Google Tasks are badged **Added** and can't be re-added.
+   Google Tasks are badged **Added** and can't be re-added. Anything the
+   detector isn't sure it parsed correctly gets an amber **⚠ Check** badge (with
+   the confidence % on hover) — double-check its date and title before adding.
 3. Optionally type a course into the **Class name (optional)** box next to
    **Add Selected** — it prefixes every task you add, so titles read
    `<class>: <assignment>`. Leave it blank to use the detected course.
@@ -66,9 +68,12 @@ between opens.
 - **Round-hour Canvas times.** Canvas deadlines with a time like "5pm" (no
   minutes) aren't parsed yet; "11:59pm"-style times work.
 - **Heuristic scraping.** Detection depends on page structure and can miss or
-  misparse assignments when a site changes its markup.
+  misparse assignments when a site changes its markup. The **⚠ Check**
+  confidence flag is itself a heuristic — treat it as a nudge to verify, not a
+  guarantee either way.
 - **Course names.** Taken from the page header when possible; if the page title
   is too generic, DueList may fall back to the course name in the URL.
-- **De-dup by title + date.** Two entries with the same task title and due date
-  are treated as the same assignment — so an unrelated task you created yourself
-  with an identical title and date could read as "already added."
+- **De-dup by name + date.** An assignment is "already added" if a task with a
+  matching due date has the same name — with or without a `Class:` prefix — so
+  adding a class name doesn't lose the added state. Two genuinely different
+  assignments with the same name and due date could still collide.
