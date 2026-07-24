@@ -254,7 +254,7 @@ if (pensiveAssignments[0].source !== "Pensive") {
 console.log(pensiveAssignments[0]);
 
 // Every detected assignment should carry a browser-local YYYY-MM-DD dueDate so
-// the backend can store the intended calendar day regardless of timezone.
+// Google Tasks can store the intended calendar day regardless of timezone.
 for (const assignment of [assignments[0], pensiveAssignments[0]]) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(assignment.dueDate || "")) {
     throw new Error(`Expected a YYYY-MM-DD dueDate, received ${assignment.dueDate}`);
@@ -301,7 +301,7 @@ if (genericAssignments[0].rawDueText.includes("Aug 20")) {
 }
 
 // dueAt is a UTC instant that can land on the next calendar day; the local
-// dueDate is what the backend stores, so assert on that.
+// dueDate is what the extension sends to Google Tasks, so assert on that.
 if (genericAssignments[0].dueDate !== "2027-08-15") {
   throw new Error(`Expected Aug 15 2027 local dueDate, received ${genericAssignments[0].dueDate}`);
 }

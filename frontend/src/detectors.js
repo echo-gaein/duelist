@@ -44,9 +44,9 @@
       .sort((a, b) => Date.parse(a.dueAt) - Date.parse(b.dueAt));
   }
 
-  // The calendar date of dueAt in this browser's timezone (YYYY-MM-DD). The
-  // backend uses it for the date-only Google Task so the day never drifts,
-  // even if the backend runs in a different timezone than the browser.
+  // The calendar date of dueAt in this browser's timezone (YYYY-MM-DD). Google
+  // Tasks stores date-only due values, so preserving the local day prevents
+  // timezone drift when the task is created.
   function localDateString(dueAt) {
     const date = new Date(dueAt);
     if (Number.isNaN(date.getTime())) return "";

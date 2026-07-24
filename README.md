@@ -130,6 +130,8 @@ npm test
 ## Project layout
 
 ```
+docs/
+  roadmap.md           Project growth plan and future feature tracks
 frontend/
   manifest.json        MV3 manifest (activeTab + scripting + identity; oauth2 client_id)
   popup.html/.css
@@ -138,11 +140,6 @@ frontend/
   src/detectors.js     DOM scraping heuristics (injected on demand)
   tests/
 ```
-
-> The old `backend/` folder (a local OAuth bridge) is no longer used and can be
-> deleted. If you still have it, note that `backend/.env` and `backend/tokens.json`
-> hold a client secret and refresh token — delete them or keep them out of any
-> shared copy.
 
 ## Known limitations
 

@@ -181,7 +181,7 @@
     return results;
   }
 
-  // ---- Pure helpers (mirror the former backend) ---------------------------
+  // ---- Pure helpers -------------------------------------------------------
 
   function validateAssignment(assignment) {
     if (!assignment || typeof assignment !== "object") {
