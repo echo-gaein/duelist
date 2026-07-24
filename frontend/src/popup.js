@@ -317,9 +317,9 @@ function condenseMessage(text) {
   const value = String(text ?? "").trim();
   if (!value) return value;
 
-  // Google's "API not enabled" error is a long paragraph — make it actionable.
+  // Google's "API not enabled" error is a long paragraph; keep it user-facing.
   if (/tasks\.googleapis\.com|has not been used in project/i.test(value)) {
-    return "Enable the Google Tasks API for your Google Cloud project, then retry.";
+    return "Google Tasks access is not fully enabled for this version of DueList yet.";
   }
 
   // Leave short messages alone; trim long ones to their first sentence.
