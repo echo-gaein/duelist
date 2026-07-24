@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "DueList",
+  "version": "0.1.0",
+  "description": "Detect homework assignments on course pages and add them to Google Tasks.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtP4HzAtBzIkj8yzH5A9i0wPfD/tbvmt7zlq7ugMd+8A399VJ+1olJ4T76C2fNl1jg6mfkbd8H85iM7rDcGD78Rb9QVuG8bAzykdB8IsXH0RK/xqG5UahlyKIQJM3UUA3Q6J2CQMIzvBJZGC5Fn6NOgLWgN0UA9QTBDwo6km4CPt5nhOA6ZgSvTOddIzCPqur2yZCrJ7fvZ0+dAqQUoFngjdCRlKIdEb1OtagkabYLXk+yZ8mo4SXtfX106pTWwwyXiL4CNWEchGbhDhZ1WCe/sXyBG20sHVR83pvC/8D2d+R+mkoq0Apy9BdQVaqGKphRR5p3B/jINpy8Qw2TmDx6wIDAQAB",
+  "permissions": ["activeTab", "scripting", "identity"],
+  "host_permissions": ["https://tasks.googleapis.com/*"],
+  "oauth2": {
+    "client_id": "1047278267053-doc18o3lfhdg66c031n8fgl4tqm2d1fu.apps.googleusercontent.com",
+    "scopes": ["https://www.googleapis.com/auth/tasks"]
+  },
+  "action": {
+    "default_title": "DueList",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "assets/icons/icon-16.png",
+      "32": "assets/icons/icon-32.png",
+      "48": "assets/icons/icon-48.png",
+      "128": "assets/icons/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "assets/icons/icon-16.png",
+    "32": "assets/icons/icon-32.png",
+    "48": "assets/icons/icon-48.png",
+    "128": "assets/icons/icon-128.png"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
+      },
+      "description": "Open DueList"
+    }
+  }
+}

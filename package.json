@@ -1,0 +1,12 @@
+{
+  "name": "assignment-calendar-sync",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Browser extension that detects course-page assignments and adds them to Google Tasks — no backend required.",
+  "scripts": {
+    "test": "node frontend/tests/googleTasks.test.js && node frontend/tests/detectors.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

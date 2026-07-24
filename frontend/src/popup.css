@@ -1,0 +1,317 @@
+:root {
+  color-scheme: light;
+  --bg: #fbfaf7;
+  --panel: #ffffff;
+  --text: #1d252c;
+  --muted: #68737d;
+  --border: #d9dde2;
+  --primary: #155eef;
+  --primary-hover: #0f4bcc;
+  --secondary: #f1f5f9;
+  --success: #0f766e;
+  --warning: #b45309;
+  --danger: #b42318;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 400px;
+  min-height: 460px;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.4 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body.unsupportedView {
+  min-height: 460px;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.shell {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-height: 460px;
+  padding: 16px;
+}
+
+.unsupportedView .shell {
+  align-content: stretch;
+  grid-template-rows: auto 1fr;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+p {
+  margin: 0;
+}
+
+#statusText {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.scanButton {
+  height: 36px;
+  min-height: 36px;
+  padding: 8px 12px;
+  background: var(--secondary);
+  font-weight: 650;
+}
+
+.resultsHeader {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: 8px;
+}
+
+.classInput {
+  height: 36px;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: var(--panel);
+  color: var(--text);
+}
+
+.classInput[hidden] {
+  display: none;
+}
+
+.emptyState {
+  display: grid;
+  align-content: center;
+  gap: 10px;
+  justify-items: center;
+  min-height: 330px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 28px 22px;
+  text-align: center;
+}
+
+.emptyState[hidden] {
+  display: none;
+}
+
+.emptyMark {
+  display: inline-grid;
+  min-width: 62px;
+  min-height: 40px;
+  place-items: center;
+  border-radius: 999px;
+  background: #e7f7f4;
+  color: var(--success);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.emptyState h2 {
+  margin: 6px 0 0;
+  font-size: 21px;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.emptyState p {
+  max-width: 290px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.primary,
+.secondary,
+#selectAllButton {
+  height: 36px;
+  min-height: 36px;
+  padding: 8px 10px;
+  font-weight: 650;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.primary {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.primary:not(:disabled):hover {
+  background: var(--primary-hover);
+}
+
+.secondary,
+#selectAllButton {
+  background: var(--secondary);
+}
+
+.results {
+  display: grid;
+  gap: 8px;
+}
+
+.resultsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.resultsControls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.toggle input {
+  margin: 0;
+  cursor: pointer;
+}
+
+#selectAllButton {
+  min-height: 30px;
+  padding: 5px 8px;
+  font-size: 12px;
+}
+
+.assignmentList {
+  display: grid;
+  max-height: 340px;
+  overflow: auto;
+  gap: 6px;
+  padding-right: 2px;
+}
+
+.assignment {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 9px;
+  align-items: start;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 8px 10px;
+}
+
+.assignment.isAdded {
+  background: #f8fafc;
+  color: var(--muted);
+}
+
+.assignment input {
+  margin-top: 2px;
+}
+
+.assignmentTitle {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  margin-left: 6px;
+  border: 1px solid #b7d8d3;
+  border-radius: 999px;
+  padding: 2px 7px;
+  background: #e7f7f4;
+  color: var(--success);
+  font-size: 11px;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.statusBadge.late {
+  border-color: #f1c0bd;
+  background: #fdecea;
+  color: var(--danger);
+}
+
+.assignmentMeta {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.message {
+  min-height: 20px;
+  max-height: 96px;
+  overflow-y: auto;
+  color: var(--muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.message.success {
+  color: var(--success);
+}
+
+.message.warning {
+  color: var(--warning);
+}
+
+.message.error {
+  color: var(--danger);
+}

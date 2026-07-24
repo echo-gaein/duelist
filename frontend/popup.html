@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DueList</title>
+    <link rel="stylesheet" href="src/popup.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <h1>Assignments</h1>
+          <p id="statusText">Checking Google Tasks...</p>
+        </div>
+        <button id="scanButton" class="scanButton" title="Scan current tab" type="button">
+          Scan
+        </button>
+      </header>
+
+      <section id="actionsSection" class="actions" aria-label="Google Tasks actions">
+        <button id="connectButton" class="secondary" type="button">Connect Google</button>
+        <input
+          id="classNameInput"
+          class="classInput"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="Class name (optional)"
+          aria-label="Class name to prefix each task (optional)"
+          hidden
+        />
+        <button id="addButton" class="primary" type="button" disabled>Add Selected</button>
+      </section>
+
+      <section id="emptyState" class="emptyState" aria-label="No assignments available" hidden>
+        <div class="emptyMark" aria-hidden="true">zzz</div>
+        <h2>Nothing to see here...</h2>
+        <p>Awfully quiet here... Try Gradescope, bCourses, or Pensive when there is homework to wrangle.</p>
+      </section>
+
+      <section id="resultsSection" class="results" aria-label="Detected assignments">
+        <div class="resultsHeader">
+          <span id="resultCount">No scan yet</span>
+          <div class="resultsControls">
+            <label class="toggle" title="Hide assignments that are already past due">
+              <input type="checkbox" id="hideLateToggle" /> Hide late
+            </label>
+            <button id="selectAllButton" type="button" disabled>Select All</button>
+          </div>
+        </div>
+        <div id="assignmentList" class="assignmentList"></div>
+      </section>
+
+      <p id="message" class="message" role="status"></p>
+    </main>
+    <script src="src/googleTasks.js"></script>
+    <script src="src/popup.js"></script>
+  </body>
+</html>
